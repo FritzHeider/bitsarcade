@@ -1,4 +1,3 @@
-<?php
 namespace App\Games;
 
 use App\GameResult;
@@ -12,61 +11,42 @@ use App\Games\Kernel\Quick\SuccessfulQuickGameResult;
 use App\Games\Kernel\RejectedGameResult;
 
 class SlotMachine extends QuickGame implements MultiplierCanBeLimited {
+    private const ICONS = ['apple', 'bananas', 'cherry', 'grapes', 'orange', 'pineapple', 'strawberry', 'watermelon', 'lemon', 'kiwi', 'raspberry', 'wild', 'scatter'];
+    private const LINES = [
+        [1, 1, 1, 1, 1], [0, 0, 0, 0, 0], [2, 2, 2, 2, 2], [0, 1, 2, 1, 0], [2, 1, 0, 1, 2],
+        [0, 0, 1, 2, 2], [2, 2, 1, 0, 0], [1, 0, 1, 2, 1], [1, 2, 1, 0, 1], [1, 0, 0, 1, 0],
+        [1, 2, 2, 1, 2], [0, 1, 0, 0, 1], [2, 1, 2, 2, 1], [0, 2, 0, 2, 0], [2, 0, 2, 0, 2],
+        [1, 0, 2, 0, 1], [1, 2, 0, 2, 1], [0, 1, 1, 1, 0], [2, 1, 1, 1, 2], [0, 2, 2, 2, 0]
+    ];
 
-    private array $icons = ['apple', 'bananas', 'cherry', 'grapes', 'orange', 'pineapple', 'strawberry', 'watermelon', 'lemon', 'kiwi', 'raspberry', 'wild', 'scatter'];
-
-    private array $payTable;
-
-    private array $lines = [
-        [1, 1, 1, 1, 1],
-        [0, 0, 0, 0, 0],
-        [2, 2, 2, 2, 2],
-        [0, 1, 2, 1, 0],
-        [2, 1, 0, 1, 2],
-        [0, 0, 1, 2, 2],
-        [2, 2, 1, 0, 0],
-        [1, 0, 1, 2, 1],
-        [1, 2, 1, 0, 1],
-        [1, 0, 0, 1, 0],
-        [1, 2, 2, 1, 2],
-        [0, 1, 0, 0, 1],
-        [2, 1, 2, 2, 1],
-        [0, 2, 0, 2, 0],
-        [2, 0, 2, 0, 2],
-        [1, 0, 2, 0, 1],
-        [1, 2, 0, 2, 1],
-        [0, 1, 1, 1, 0],
-        [2, 1, 1, 1, 2],
-        [0, 2, 2, 2, 0]
+    private array $payTable = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 10, 2],
+        [5, 5, 5, 10, 10, 10, 15, 15, 25, 25, 50, 250, 5],
+        [25, 25, 25, 50, 50, 50, 75, 75, 125, 125, 250, 2500, 0],
+        [125, 125, 125, 250, 250, 250, 500, 500, 750, 750, 1250, 10000, 0]
     ];
 
     private int $scatterMultiplier = 1;
 
     public function __construct() {
-        $this->payTable = [
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-            [0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2, 10, 2],
-            [5, 5, 5, 10, 10, 10, 15, 15, 25, 25, 50, 250, 5],
-            [25, 25, 25, 50, 50, 50, 75, 75, 125, 125, 250, 2500, 0],
-            [125, 125, 125, 250, 250, 250, 500, 500, 750, 750, 1250, 10000, 0]
-        ];
+        parent::__construct();
     }
 
     function metadata($name = null): Metadata {
         $metadata = new class extends Metadata {
-
             public $name = 'External Game';
 
             function id(): string {
                 return "slotmachine";
             }
 
-            function setName($name) {
-                $this->name = 'joejoe';
-
+            function setName($name): self {
+                $this->name = $name;
                 return $this;
             }
+
             function name(): string {
                 return $this->name;
             }
@@ -74,32 +54,26 @@ class SlotMachine extends QuickGame implements MultiplierCanBeLimited {
             function icon(): string {
                 return "fab fa-raspberry-pi";
             }
-
         };
 
-        if ($name != null) {
-            return $metadata->setName($name);
-        } else {
-            return $metadata;
-        }
-     }
-
-    private function convertToView($result) {
-        $out = [];
-        foreach ($result as $item) {
-            $column = [];
-            foreach ($item as $value) array_push($column, array_search($value, $this->icons));
-            array_push($out, $column);
-        }
-        return $out;
+        return $name ? $metadata->setName($name) : $metadata;
     }
 
-    private function wildLineWin($singleLineBet, $line, $multiplierOnly = false) {
-        $values = [11, 0, 0];
-        if($line[0] != $values[0]) return $values;
+    private function convertToView(array $result): array {
+        return array_map(function ($item) {
+            return array_map(function ($value) {
+                return array_search($value, self::ICONS);
+            }, $item);
+        }, $result);
+    }
 
-        for($i = 0; $i < count($line); $i++) {
-            if($line[$i] != $values[0]) break;
+    private function wildLineWin($singleLineBet, array $line, bool $multiplierOnly = false): array {
+        $wildSymbol = 11;
+        $values = [$wildSymbol, 0, 0];
+        if ($line[0] !== $wildSymbol) return $values;
+
+        foreach ($line as $symbol) {
+            if ($symbol !== $wildSymbol) break;
             $values[1]++;
         }
 
@@ -109,85 +83,56 @@ class SlotMachine extends QuickGame implements MultiplierCanBeLimited {
         return $values;
     }
 
-    private function lineWin($singleLineBet, $line, $multiplierOnly = false) {
+    private function lineWin($singleLineBet, array $line, bool $multiplierOnly = false): int {
         $wildWin = $this->wildLineWin($singleLineBet, $line, $multiplierOnly);
         $multiplier = 1;
         $symbol = $line[0];
 
-        for($i = 0; $i < count($line); $i++) {
-            if($line[$i] != 11) {
-                if($line[$i] != 12) $symbol = $line[$i];
+        foreach ($line as $i => $s) {
+            if ($s !== 11 && $s !== 12) {
+                $symbol = $s;
                 break;
             }
-
-            if($line[$i] == 12) break;
-
-            if($i < count($line) - 1) $multiplier = 2;
-            else if($i == count($line) - 1) $multiplier = 1;
+            if ($s === 12) break;
+            $multiplier = $i < count($line) - 1 ? 2 : 1;
         }
 
-        /*
-         * Wild symbol substitution. Other wild are artificial they are not part of the pay table.
-         */
-        for($i = 0; $i < count($line); $i++) {
-            if($line[$i] == 11) {
-                $line[$i] = $symbol;
+        foreach ($line as $i => &$s) {
+            if ($s === 11) {
+                $s = $symbol;
                 $multiplier = 2;
             }
         }
 
-        /*
-         * Count symbols in winning line.
-         */
-        $number = 0;
-        for($i = 0; $i < count($line); $i++) {
-            if($line[$i] == $symbol) $number++;
-            else break;
-        }
-
-        /*
-         * Clear unused symbols.
-         */
-        for($i = $number; $i < count($line); $i++) $line[$i] = -1;
+        $number = count(array_filter($line, fn($s) => $s === $symbol));
+        foreach (array_slice($line, $number) as &$s) $s = -1;
 
         $win = $multiplierOnly
             ? $this->payTable[$number][$symbol] * $multiplier
             : $singleLineBet * $this->payTable[$number][$symbol] * $multiplier;
-        if($win < $wildWin[2]) $win = $wildWin[1];
 
-        return $win;
+        return $win < $wildWin[2] ? $wildWin[2] : $win;
     }
 
-    private function linesWin($lines, $singleLineBet, $view, $multiplierOnly = false) {
-        $win = 0; $indexes = [];
-        for($l = 0; $l < count($this->lines); $l++) {
-            if($l + 1 > $lines) continue;
+    private function linesWin(int $lines, float $singleLineBet, array $view, bool $multiplierOnly = false): array {
+        $win = 0;
+        $indexes = [];
 
-            $line = [-1, -1, -1, -1, -1];
-            for($i = 0; $i < count($line); $i++) {
-                $index = $this->lines[$l][$i];
-                $line[$i] = $view[$i][$index];
-            }
+        foreach (self::LINES as $l => $pattern) {
+            if ($l + 1 > $lines) continue;
 
+            $line = array_map(fn($index, $i) => $view[$i][$index], $pattern, array_keys($pattern));
             $lineWin = $this->lineWin($singleLineBet, $line, $multiplierOnly);
             $win += $lineWin;
 
-            if($lineWin > 0) array_push($indexes, $l + 1);
+            if ($lineWin > 0) $indexes[] = $l + 1;
         }
 
-        return [
-            'profit' => $win,
-            'indexes' => $indexes
-        ];
+        return ['profit' => $win, 'indexes' => $indexes];
     }
 
-    private function scatterWin($totalBet, $view, $multiplierOnly = false) {
-        $numberOfScatters = 0;
-        for($i = 0; $i < count($view); $i++) {
-            for($j = 0; $j < count($view[$i]); $j++) {
-                if($view[$i][$j] == 12) $numberOfScatters++;
-            }
-        }
+    private function scatterWin(float $totalBet, array $view, bool $multiplierOnly = false): float {
+        $numberOfScatters = array_reduce($view, fn($carry, $column) => $carry + count(array_filter($column, fn($s) => $s === 12)), 0);
 
         return $multiplierOnly
             ? $this->payTable[$numberOfScatters][12] * $this->scatterMultiplier
@@ -195,57 +140,10 @@ class SlotMachine extends QuickGame implements MultiplierCanBeLimited {
     }
 
     function start($user, Data $data) {
-        if(floatval(number_format($data->bet() / $data->game()->lines, 8, '.', '')) <= 0.00000000)
+        if (floatval(number_format($data->bet() / $data->game()->lines, 8, '.', '')) <= 0.00000000) {
             return new RejectedGameResult(1, 'Invalid bet amount per line');
+        }
 
         return new SuccessfulQuickGameResult((new ProvablyFair($this))->result(), function (SuccessfulQuickGameResult $result, array $transformedResults) use ($user, $data) {
             $profit = $this->getProfit($data->game()->lines, $data->bet(), $data->bet() / $data->game()->lines, $this->convertToView($result->provablyFairResult()->result()));
             $result->delay(3500);
-            $result->winCustom($user, $data, $profit['profit'], $profit['multiplier']);
-            return [
-                'result' => $result->provablyFairResult()->result(),
-                'lines' => $profit['lines']
-            ];
-        });
-    }
-
-    function getProfit($lines, $totalBet, $singleLineBet, array $view): array {
-        return [
-            'profit' => $this->linesWin($lines, $singleLineBet, $view)['profit'] + $this->scatterWin($totalBet, $view),
-            'multiplier' => $this->linesWin($lines, $singleLineBet, $view, true)['profit'] + $this->scatterWin($totalBet, $view, true),
-            'lines' => $this->linesWin($lines, $singleLineBet, $view)['indexes']
-        ];
-    }
-
-    function result(ProvablyFairResult $result): array {
-        $output = [];
-        $floats = $result->extractFloats(5 * 3);
-        $total = 0;
-
-        for($i = 0; $i < 5; $i++) {
-            $column = [];
-            for($j = 0; $j < 3; $j++) {
-                array_push($column, $this->icons[floor($floats[$total] * count($this->icons))]);
-                $total++;
-            }
-            array_push($output, $column);
-        }
-
-        return $output;
-    }
-
-    function isLoss(ProvablyFairResult $result, Data $data): bool {
-        return $this->getProfit($data->game()->lines, $data->bet(), $data->bet()/ $data->game()->lines, $result->result())['multiplier'] <= 1;
-    }
-
-    public function multiplier(?\App\Game $game, ?Data $data, ProvablyFairResult $result): float {
-        return $this->getProfit($data->game()->lines, $data->bet(), $data->bet()/$data->game()->lines, $result->result())['multiplier'];
-    }
-
-    public function getBotData(): array {
-        return [
-            'lines' => mt_rand(1, 20)
-        ];
-    }
-
-}
