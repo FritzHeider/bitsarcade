@@ -2,7 +2,6 @@
 /public
 /ssl
 /app/Console
-/tests
 /vendor
 /storage
 /geth-linux-amd64-1.9.15-0f77f34b
