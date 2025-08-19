@@ -15,7 +15,6 @@ nohup.out
 /cryptorpc
 datagamble.nl.key
 datagamble.nl.pem
-webpack.mix.js
 worker.log
 .env.backup
 .phpunit.result.cache

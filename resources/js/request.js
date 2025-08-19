@@ -1,13 +1,15 @@
 /**
- * @param route API route. If starts without "/", then /api/ will be prepended.
+ * @param route API route. If starts without "/", then API_URL will be prepended.
  * @param options GET requires array like ['foo', 'bar'] (optional)
  *                POST requires objects like {'foo': 'value', 'bar': 'value'}
  * @param type get|post
  * @param timeout Timeout in ms
  * @returns Promise
  */
+const API_URL = (process.env.API_URL || '/api').replace(/\/?$/, '/');
+
 $.request = function(route, options = [], type = 'post', timeout = 25000) {
-    const url = `${!route.startsWith('/') ? '/api/' : ''}${route + (type === 'get' ? arrayToRouteParams(options) : '')}`;
+    const url = `${!route.startsWith('/') ? API_URL : ''}${route + (type === 'get' ? arrayToRouteParams(options) : '')}`;
     return new Promise(function(resolve, reject) {
         $.ajax({
             url: url,
@@ -79,7 +81,7 @@ function handleApiResponse(url, json, resolve, reject) {
 $.formDataRequest = function(route, options) {
     return new Promise(function(resolve, reject) {
         $.ajax({
-            url: `${!route.startsWith('/') ? '/api/' : ''}${route}`,
+            url: `${!route.startsWith('/') ? API_URL : ''}${route}`,
             type: 'POST',
             data: options,
             contentType: false,
