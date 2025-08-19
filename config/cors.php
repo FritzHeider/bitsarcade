@@ -6,31 +6,34 @@ return [
     |--------------------------------------------------------------------------
     | Cross-Origin Resource Sharing (CORS) Configuration
     |--------------------------------------------------------------------------
-    |
-    | Here you may configure your settings for cross-origin resource sharing
-    | or "CORS". This determines what cross-origin operations may execute
-    | in web browsers. You are free to adjust these settings as needed.
-    |
-    | To learn more: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    |
     */
 
-    'paths' => ['api/*'],
+    // Include all API endpoints (add Sanctum cookie route if you use it)
+    'paths' => ['api/*', 'sanctum/csrf-cookie'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        'https://bitsarcade.vercel.app',
+    // ✅ Explicitly list allowed origins (env + prod) and use patterns for previews
+    'allowed_origins' => array_filter([
+        env('APP_URL'),                    // e.g. http://localhost:3000 or https://yourdomain.com
+        'https://bitsarcade.vercel.app',  // production frontend
+    ]),
+
+    // ✅ Tight preview-domain patterns (adjust to your project naming)
+    // Examples:
+    // - Vercel preview: https://bitsarcade-git-<branch>-<user>.vercel.app
+    // - Vercel preview (alt): https://bitsarcade-<hash>.vercel.app
+    'allowed_origins_patterns' => [
+        '/^https:\/\/bitsarcade-[a-z0-9-]+\.vercel\.app$/i',
+        '/^https:\/\/bitsarcade-git-[a-z0-9-]+-[a-z0-9-]+\.vercel\.app$/i',
     ],
 
-    'allowed_origins_patterns' => [],
-
     'allowed_headers' => ['*'],
-
     'exposed_headers' => [],
 
-    'max_age' => 0,
+    // Cache preflight responses (seconds); 0 disables caching.
+    'max_age' => 3600,
 
+    // ⚠️ If you use cookie auth (Sanctum/session), set this to true and DO NOT use '*' origins
     'supports_credentials' => false,
-
 ];

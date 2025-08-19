@@ -31,3 +31,31 @@ The application will be available at `http://localhost:8000` by default.
 
 A GitHub Actions workflow is provided at `.github/workflows/ci.yml`.
 It installs PHP dependencies and executes the test suite on every push and pull request.
+
+## Vercel deployment
+
+1. Switch to the main branch:
+   ```bash
+   git checkout main
+   ```
+2. Install the Vercel CLI:
+   ```bash
+   npm install -g vercel
+   ```
+3. Run the setup command and follow the prompts:
+   ```bash
+   vercel
+   ```
+4. Add required environment variables (repeat for each variable):
+   ```bash
+   vercel env add KEY production
+   ```
+5. Deploy to production:
+   ```bash
+   vercel --prod
+   ```
+
+Before deploying, update the frontend `.env` file so its backend URL points to your deployed API:
+```
+VITE_BACKEND_URL=https://your-backend-domain.example
+```
