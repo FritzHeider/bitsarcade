@@ -5,7 +5,7 @@ var app   = require('express')();
 var http  = require('http').Server(app);
 var io    = require('socket.io')(http);
 const Redis = require('ioredis');
-var domain = 'https://c2c2.datagamble.nl';
+const apiUrl = process.env.API_URL || 'https://c2c2.datagamble.nl/api';
 
 var client = new Redis({
    host: '127.0.0.1',
@@ -50,21 +50,21 @@ client.on('error', error => {
 });
 
 setInterval(function() {
-	requestify.get(domain+'/api/state/file-system').then(function (response) {
-			response = JSON.parse(response.body);
+        requestify.get(`${apiUrl}/state/file-system`).then(function (response) {
+                        response = JSON.parse(response.body);
                         if(response.error != null) {
                             console.log('[STATUS] State file-system fail...');
-							async function fixfilesystem() {
-								try {
-									process.chdir('/var/www/html/');
-									const { stdout, stderr } = await exec('sudo chmod -R 777 storage/ & sudo chmod -R 777 bootstrap/cache/');
-								} catch (err) {
-									console.error(err);
-								};
-							};
-							fixfilesystem();
+                                                        async function fixfilesystem() {
+                                                                try {
+                                                                        process.chdir('/var/www/html/');
+                                                                        const { stdout, stderr } = await exec('sudo chmod -R 777 storage/ & sudo chmod -R 777 bootstrap/cache/');
+                                                                } catch (err) {
+                                                                        console.error(err);
+                                                                };
+                                                        };
+                                                        fixfilesystem();
                             console.log('[STATUS] State file-system restored!');
                         }
     });
-	console.log('[STATUS] State file-system good!');
-}, 100000)
+        console.log('[STATUS] State file-system good!');
+}, 100000);
