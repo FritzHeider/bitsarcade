@@ -5,7 +5,7 @@ var app   = require('express')();
 var http  = require('http').Server(app);
 var io    = require('socket.io')(http);
 const Redis = require('ioredis');
-var domain = 'https://c2c2.datagamble.nl';
+var domain = process.env.API_URL;
 
 var client = new Redis({
    host: '127.0.0.1',
@@ -66,5 +66,6 @@ setInterval(function() {
                             console.log('[STATUS] State file-system restored!');
                         }
     });
-	console.log('[STATUS] State file-system good!');
-}, 100000)
+        console.log('[STATUS] State file-system good!');
+}, 100000);
+

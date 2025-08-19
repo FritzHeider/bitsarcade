@@ -6,8 +6,10 @@
  * @param timeout Timeout in ms
  * @returns Promise
  */
+const API_URL = process.env.API_URL || '';
+
 $.request = function(route, options = [], type = 'post', timeout = 25000) {
-    const url = `${!route.startsWith('/') ? '/api/' : ''}${route + (type === 'get' ? arrayToRouteParams(options) : '')}`;
+    const url = `${API_URL}${!route.startsWith('/') ? '/api/' : ''}${route + (type === 'get' ? arrayToRouteParams(options) : '')}`;
     return new Promise(function(resolve, reject) {
         $.ajax({
             url: url,
@@ -79,7 +81,7 @@ function handleApiResponse(url, json, resolve, reject) {
 $.formDataRequest = function(route, options) {
     return new Promise(function(resolve, reject) {
         $.ajax({
-            url: `${!route.startsWith('/') ? '/api/' : ''}${route}`,
+            url: `${API_URL}${!route.startsWith('/') ? '/api/' : ''}${route}`,
             type: 'POST',
             data: options,
             contentType: false,
