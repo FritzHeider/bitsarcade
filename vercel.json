@@ -4,6 +4,9 @@
       "runtime": "vercel-php@0.6.0"
     }
   },
+  "routes": [
+    { "src": "/(.*)", "dest": "api/index.php" }
+  ],
   "buildCommand": "composer install --no-dev && npm run prod",
   "outputDirectory": "public"
 }
