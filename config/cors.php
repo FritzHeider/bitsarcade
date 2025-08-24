@@ -16,7 +16,7 @@ return [
     // ✅ Explicitly list allowed origins (env + prod) and use patterns for previews
     'allowed_origins' => array_filter([
         env('APP_URL'),                    // e.g. http://localhost:3000 or https://yourdomain.com
-        'https://bitsarcade.vercel.app',  // production frontend
+        env('FRONTEND_URL', 'https://bitsarcade.vercel.app'),  // production frontend
     ]),
 
     // ✅ Tight preview-domain patterns (adjust to your project naming)
