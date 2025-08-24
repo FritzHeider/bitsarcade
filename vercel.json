@@ -4,6 +4,10 @@
       "runtime": "@vercel/php@latest"
     }
   },
+  "routes": [
+    { "src": "/(.*)\\.(css|js|png|jpg|svg|ico|woff2)$", "dest": "/public/$1.$2" },
+    { "src": "/(.*)", "dest": "api/index.php" }
+  ],
   "installCommand": "npm install && composer install --no-dev",
   "buildCommand": "npm run prod",
   "outputDirectory": "public"
