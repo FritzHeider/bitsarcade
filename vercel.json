@@ -4,6 +4,7 @@
       "runtime": "vercel-php@0.6.0"
     }
   },
-  "buildCommand": "composer install --no-dev && npm run prod",
+  "installCommand": "npm install && composer install --no-dev",
+  "buildCommand": "npm run prod",
   "outputDirectory": "public"
 }
