@@ -1,0 +1,13 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="630" rx="48" fill="url(#paint0_linear)"/>
+  <text x="160" y="260" fill="white" font-size="72" font-family="'Space Grotesk', 'Inter', sans-serif" font-weight="700">BitsArcade</text>
+  <text x="160" y="360" fill="rgba(255,255,255,0.85)" font-size="28" font-family="'Inter', sans-serif">
+    The modern gaming growth OS
+  </text>
+  <defs>
+    <linearGradient id="paint0_linear" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop stop-color="hsl(272,92%,62%)"/>
+      <stop offset="1" stop-color="hsl(222,94%,60%)"/>
+    </linearGradient>
+  </defs>
+</svg>
