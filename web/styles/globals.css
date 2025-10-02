@@ -1,0 +1,75 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 220 33% 98%;
+  --foreground: 224 71% 4%;
+  --muted: 220 16% 92%;
+  --muted-foreground: 222 14% 32%;
+  --accent: 242 84% 64%;
+  --accent-foreground: 220 38% 98%;
+  --primary: 266 89% 57%;
+  --primary-foreground: 210 50% 98%;
+  --secondary: 224 28% 18%;
+  --secondary-foreground: 220 33% 94%;
+  --destructive: 8 82% 61%;
+  --destructive-foreground: 0 0% 100%;
+  --card: 220 35% 99%;
+  --card-foreground: 224 71% 4%;
+  --border: 222 24% 88%;
+  --input: 222 24% 88%;
+  --ring: 266 89% 57%;
+}
+
+.dark {
+  --background: 228 25% 12%;
+  --foreground: 214 32% 96%;
+  --muted: 224 18% 22%;
+  --muted-foreground: 214 20% 74%;
+  --accent: 262 87% 64%;
+  --accent-foreground: 226 32% 12%;
+  --primary: 272 92% 72%;
+  --primary-foreground: 229 32% 12%;
+  --secondary: 230 22% 18%;
+  --secondary-foreground: 214 32% 96%;
+  --destructive: 3 85% 61%;
+  --destructive-foreground: 0 0% 100%;
+  --card: 230 28% 16%;
+  --card-foreground: 214 32% 96%;
+  --border: 230 18% 30%;
+  --input: 230 18% 30%;
+  --ring: 272 92% 72%;
+}
+
+body {
+  @apply bg-background text-foreground antialiased;
+  font-family: var(--font-inter), system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+a {
+  @apply text-primary underline-offset-4 transition hover:text-primary/80;
+}
+
+.btn-gradient {
+  background-image: linear-gradient(120deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+  box-shadow: 0 20px 50px -28px hsl(var(--primary) / 0.8);
+}
+
+.shadow-soft {
+  box-shadow: 0 40px 120px -50px rgba(56, 33, 114, 0.45);
+}
+
+section {
+  @apply py-16 md:py-24;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    font-feature-settings: "ss04" on, "cv02" on;
+  }
+}
